@@ -38,16 +38,16 @@
             margin-top: 2rem;
             color: #343a40;
         }
-        ul {
-            list-style: none;
-            padding-left: 0;
-        }
-        li {
+        .result-card {
             background-color: #ffffff;
             padding: 1rem;
             margin-bottom: 1rem;
             border-radius: 0.5rem;
             box-shadow: 0 0.125rem 0.25rem rgba(0, 0, 0, 0.075);
+        }
+        .result-score {
+            font-size: 0.9rem;
+            color: #6c757d;
         }
         footer {
             background-color: #f8f9fa;
@@ -60,36 +60,37 @@
 </head>
 <body class="main">
     <div class="container">
-        <h1 class="text-center">🔎 Multimodal RAG Demo</h1>
+        <h1 class="text-center">Multimodal RAG Demo</h1>
 
         <form method="POST" class="d-flex justify-content-center">
             <input type="text" name="query" placeholder="Enter your query..." required>
             <button type="submit">Search</button>
         </form>
 
-        <h2>📄 Text Results:</h2>
-        <ul>
-            {% for doc, meta in results_text %}
-                <li>
-                    {{ doc }} <br>
-                    <small class="text-muted">Metadata: {{ meta }}</small>
-                </li>
-            {% endfor %}
-        </ul>
-
-        <h2>🖼️ Image Results:</h2>
-        <ul class="row">
-            {% for meta in results_image %}
-                <li class="col-md-4">
-                    <div class="card">
-                        <img src="{{ meta.image_url }}" class="card-img-top" alt="Image">
-                        <div class="card-body">
-                            <p class="card-text">{{ meta.news_title }}</p>
+        {% if combined_results %}
+            <h2>Combined Results (Text + Image)</h2>
+            <ul class="list-unstyled row">
+                {% for result in combined_results %}
+                    <li class="col-md-6">
+                        <div class="result-card">
+                            <div class="result-score">Score: {{ result.combined_score | round(3) }}</div>
+                            
+                            {% if result.type == 'text' %}
+                                <h5>📄 Text Result</h5>
+                                <p>{{ result.content }}</p>
+                                <small class="text-muted">Metadata: {{ result.meta }}</small>
+                            
+                            {% elif result.type == 'image' %}
+                                <h5>Image Result</h5>
+                                <img src="{{ result.meta.image_url }}" class="img-fluid mb-2" alt="Image">
+                                <p>{{ result.meta.news_title }}</p>
+                                <small class="text-muted">Issue: <a href="{{ result.meta.issue_url }}" target="_blank">{{ result.meta.issue_url }}</a></small>
+                            {% endif %}
                         </div>
-                    </div>
-                </li>
-            {% endfor %}
-        </ul>
+                    </li>
+                {% endfor %}
+            </ul>
+        {% endif %}
 
         <footer class="text-center py-4 mt-5">
             <p>&copy; 2024 Yuliia Lazarovych. Усі права захищені.</p>
