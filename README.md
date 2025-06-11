@@ -2,8 +2,17 @@
 This repository implements a Retrieval-Augmented Generation (RAG) system tailored for multimodal search across articles and images from the "The Batch" newsletter by DeepLearning.ai. It integrates embedding models, reranking, Gemini-based reasoning, and a clean web UI using Flask.
 
 ### Overview
-This project demonstrates a retrieval-augmented generation system for searching and analyzing multimodal content — i.e., both text and associated images in news articles. It uses:
+This project demonstrates a retrieval-augmented generation system for searching and analyzing multimodal content — i.e., both text and associated images in news articles. Users can query the system via a simple web interface, which returns the most relevant news content — ranked using both neural embeddings and large language model (LLM) analysis — and optionally includes images and a generated summary. It uses:
+- Data Collection Pipeline:
+    - Extract article links;
+    - Parse HTML structure for "News" section, images, and paragraphs;
+    - Chunk text using RecursiveCharacterTextSplitter (LangChain);
 - Sentence and CLIP embeddings for retrieval;
+    - Model: SentenceTransformer (MiniLM) for general context.
+    - Alternative: allenai-specter for technical queries (e.g., research paper mentions).
+    - Image Embeddings model: CLIP (by OpenAI).
+- Hybrid + Lexical Boosting — module: HybridSearcher (Neural retrieval misses lexical matches (e.g., rare or misspelled terms));
+- Reranking (Semantic Cross-Encoder) model: cross-encoder/ms-marco-MiniLM-L-6-v2 (considers both query and candidate text together to reassess semantic match);
 - Gemini for semantic relevance and answer synthesis;
 - ChromaDB for vector storage;
 - Flask for the web interface.
@@ -73,7 +82,13 @@ thebatch_rag_system/
 │       ├── __init__.py
 │       ├── search.py                    # Core logic for handling user queries, embedding, retrieval, reranking, and rendering.
 │       ├── models.py                    # Model & data initialization: loads SentenceTransformers, CLIP, ChromaDB collections, etc.
-│       ├── processors.py                 Key search components.
+│       ├── processors.py                # Key search components.
+│       │   ├── GeminiProcessor          # Relevance scoring + answer generation via Gemini LLM
+│       │   ├── QueryExpander            # Synonym-based query expander
+│       │   ├── MultiEmbeddingSearch     # Embedding logic for different query types (general vs technical)
+│       │   ├── RerankerModel            # CrossEncoder reranking of results
+│       │   ├── HybridSearcher           # BM25-like lexical relevance scorer (hybrid search boost)
+│       │   └── ResultGrouper            # Groups related text/image results into unified UI cards
 │       ├── utils.py                     # Helper utilities (L2-normalization, cosine similarity between embeddings, dict traversal for nested fields)
 ├── static/                   # Empty for now
 │   ├── css
