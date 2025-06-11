@@ -20,7 +20,7 @@ This project demonstrates a retrieval-augmented generation system for searching 
 ```
 
 ### Data Collection (data_collection.py)
-This module implements a fully automated scraper and preprocessor for DeepLearning.ai’s The Batch newsletter.
+This module implements a scraper and preprocessor for DeepLearning.ai’s The Batch newsletter.
 Class: BatchDataCollector
 Scrapes all recent newsletter issues and extracts:
 - News article titles
