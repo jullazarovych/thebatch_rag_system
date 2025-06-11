@@ -399,7 +399,7 @@ class BatchDataCollector:
 if __name__ == "__main__":
     collector = BatchDataCollector()
 
-    articles = collector.collect_data(max_articles=5)
+    articles = collector.collect_data(max_articles=20)
     collector.save_data()
     collector.save_chunks_only()
     collector.save_news_articles()
