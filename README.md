@@ -9,7 +9,7 @@ This project demonstrates a retrieval-augmented generation system for searching 
     - Chunk text using RecursiveCharacterTextSplitter (LangChain);
 - Sentence and CLIP embeddings for retrieval;
     - Model: SentenceTransformer (MiniLM) for general context.
-    - Alternative: allenai-specter for technical queries (e.g., research paper mentions).
+    - Alternative: allenai-specter for technical queries.
     - Image Embeddings model: CLIP (by OpenAI).
 - Hybrid + Lexical Boosting — module: HybridSearcher (Neural retrieval misses lexical matches (e.g., rare or misspelled terms));
 - Reranking (Semantic Cross-Encoder) model: cross-encoder/ms-marco-MiniLM-L-6-v2 (considers both query and candidate text together to reassess semantic match);
