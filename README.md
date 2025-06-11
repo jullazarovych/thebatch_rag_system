@@ -1,5 +1,5 @@
 # Multimodal RAG System — News Retrieval Demo
-This repository implements a Retrieval-Augmented Generation (RAG) system tailored for multimodal search across articles and images from the "The Batch" newsletter by DeepLearning.ai. It integrates embedding models, reranking, Gemini-based reasoning, and a clean web UI using Flask.
+This repository implements a Retrieval-Augmented Generation (RAG) system tailored for multimodal search across articles and images from the "The Batch" newsletter by DeepLearning.ai. It integrates embedding models, reranking, Gemini-based reasoning, and a web UI using Flask.
 
 ### Overview
 This project demonstrates a retrieval-augmented generation system for searching and analyzing multimodal content — i.e., both text and associated images in news articles. Users can query the system via a simple web interface, which returns the most relevant news content — ranked using both neural embeddings and large language model (LLM) analysis — and optionally includes images and a generated summary. It uses:
