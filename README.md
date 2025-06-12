@@ -154,4 +154,7 @@ python run.py
 Assess relevance of retrieved items
 Generate synthesized answers from top results
 Gemini calls are rate-limited to 8 requests per minute to comply with the API quota. If limits are hit, requests will wait ~60 seconds.
-If you don’t provide a GEMINI_API_KEY, the system will gracefully skip Gemini processing.          
+If you don’t provide a GEMINI_API_KEY, the system will gracefully skip Gemini processing.    
+
+## Video Demo
+[Video Demo1 (please wait requests will wait ~60 seconds)](https://drive.google.com/file/d/1xilitXIKSO-OlmtNdSKjPNd3DwdRASJ4/view?usp=sharing)
