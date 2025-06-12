@@ -158,3 +158,7 @@ If you don’t provide a GEMINI_API_KEY, the system will gracefully skip Gemini 
 
 ## Video Demo
 [Video Demo1 (please wait requests will wait ~60 seconds)](https://drive.google.com/file/d/1xilitXIKSO-OlmtNdSKjPNd3DwdRASJ4/view?usp=sharing)
+timecodes:
+00:00 - 00:15
+00:37 - 00:53
+01:55 - 02:07
