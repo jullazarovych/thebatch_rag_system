@@ -112,8 +112,6 @@ def handle_query(user_query):
         combined_results, batch_chunks, news_articles
     )
 
-    generated_answer = gemini_processor.generate_answer(user_query, combined_results[:3])
-
     search_stats = {
         'original_query': user_query,
         'expanded_query': expanded_query,
@@ -126,14 +124,11 @@ def handle_query(user_query):
         'gemini_enabled': getattr(gemini_processor, 'enabled', False)
     }
 
-
     logger.info(f"Search completed successfully for query: {user_query}")
-
     return render_template(
         "base.html",
         combined_results=combined_results,
         grouped_results=grouped_results,
-        generated_answer=generated_answer,
         search_stats=search_stats,
         user_query=user_query  
     )

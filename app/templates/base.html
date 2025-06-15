@@ -53,6 +53,10 @@
             background-color: #f8f9fa;
             margin-top: 3rem;
         }
+        .generated-answer {
+            background-color: #e9f5ff;
+            border-left: 4px solid #0d6efd;
+        }
     </style>
 </head>
 <body class="main">
@@ -69,6 +73,7 @@
         {% endif %}
 
         {% if combined_results %}
+            
             <h2>Combined Results</h2>
             <ul class="list-unstyled row">
                 {% for result in combined_results %}

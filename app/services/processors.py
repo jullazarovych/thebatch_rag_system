@@ -42,28 +42,41 @@ class GeminiProcessor:
         self.rate_limiter = RateLimiter(max_requests=8, time_window=60)
         self.enabled = True 
         self.relevance_prompt = """
-        Analyze the relevance of content to the user query on a scale of 0-10.
-        Return ONLY valid JSON format:
+        Analyze the relevance of each piece of content to the user's query on a scale from 0 to 10.
+
+        MUST return ONLY valid JSON in the following format:
         {
-            "relevance_score": 5,
-            "explanation": "brief explanation",
-            "key_matches": ["matching keywords"]
+        "relevance_score": 8,
+        "explanation": "short explanation of relevance",
+        "key_matches": ["keywords that matched"]
         }
+
+        DO NOT add any other text, just JSON!
         """
 
     def make_gemini_request(self, prompt):
         self.rate_limiter.wait_if_needed()
+        logger.info(f"Sending prompt to Gemini:\n{prompt}")
         response = self.model.generate_content(prompt)
-        return response.text.strip() if hasattr(response, 'text') else None
+        response_text = response.text.strip() if hasattr(response, 'text') else None
+        logger.info(f"Gemini response:\n{response_text}")
+        return response_text
 
     def safe_json_parse(self, text):
         try:
             return json.loads(text)
         except json.JSONDecodeError:
-            match = re.search(r"{[\s\S]+}", text)
-            if match:
+            markdown_match = re.search(r"```json\s*\n([\s\S]+?)\n```", text)
+            if markdown_match:
                 try:
-                    return json.loads(match.group(0))
+                    return json.loads(markdown_match.group(1))
+                except json.JSONDecodeError:
+                    pass
+        
+            json_match = re.search(r"[{\[][\s\S]+?[}\]]", text)
+            if json_match:
+                try:
+                    return json.loads(json_match.group(0))
                 except json.JSONDecodeError:
                     pass
 
@@ -78,61 +91,6 @@ class GeminiProcessor:
         prompt = f"{self.relevance_prompt}\n\nQUERY: {query}\nCONTENT: {content_text}"
         response = self.make_gemini_request(prompt)
         return self.safe_json_parse(response)
-
-    def generate_answer(self, query, results):
-        if not results:
-            return {
-                "answer": f"No results found for '{query}'",
-                "confidence": 0.0,
-                "sources_used": [],
-                "recommendations": []
-            }
-
-        content_summary = []
-        for r in results[:3]:
-            content_summary.append(r['content'][:150] if r['type'] == 'text' else r['meta'].get('news_title', ''))
-
-        prompt = f"""
-        Provide a detailed answer based on the search results.
-        QUERY: {query}
-        CONTENT: {' | '.join(content_summary)}
-
-        Return JSON:
-        {{
-            "answer": "text",
-            "confidence": 0.8,
-            "sources_used": ["source1"],
-            "recommendations": ["tip"]
-        }}
-        """
-
-        response = self.make_gemini_request(prompt)
-
-        if not response or response.strip() == "":
-            return {
-                "answer": "Gemini returned no content.",
-                "confidence": 0.0,
-                "sources_used": [],
-                "recommendations": []
-            }
-
-        
-        match = re.search(r"{[\s\S]+}", response)
-        if match:
-            try:
-                return json.loads(match.group(0))
-            except json.JSONDecodeError:
-                logger.warning(f"Failed to parse extracted JSON from Gemini:\n{match.group(0)!r}")
-        else:
-            logger.warning(f"No JSON block found in Gemini response:\n{response!r}")
-
-        return {
-            "answer": "Gemini response could not be parsed.",
-            "confidence": 0.0,
-            "sources_used": [],
-            "recommendations": []
-        }
-
 
 
 class QueryExpander:
