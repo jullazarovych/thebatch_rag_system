@@ -96,7 +96,7 @@ def handle_query(user_query):
         except Exception as e:
             logger.error(f"Image search error: {e}")
 
-    alpha, beta, gamma = 0.3, 0.3, 0.4
+    alpha, beta, gamma = 0.3, 0.4, 0.4
     for item in combined_results:
         item['combined_score'] = (
             alpha * item['score_text'] +
@@ -106,7 +106,7 @@ def handle_query(user_query):
     combined_results = hybrid_searcher.hybrid_search(user_query, combined_results, all_documents)
     combined_results = reranker.rerank_results(user_query, combined_results)
 
-    combined_results = combined_results[:5]
+    combined_results = combined_results[:10]
 
     grouped_results = result_grouper.group_results(
         combined_results, batch_chunks, news_articles
